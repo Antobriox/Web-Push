@@ -1,7 +1,14 @@
 // src/app/components/NotificationManager.tsx
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Button } from 'primereact/button';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import './NotificationManager.css';  // Asegúrate de que los estilos personalizados se carguen
 
 const PUBLIC_VAPID_KEY = 'BJHMAExOhPj3AwQtYYK1Sh5ZxBFKpRNOYml6iFUc3DPVSwUCLWGhGISiLYl7x0Ibr7_QaDfUqdOpaOfJ4BK4tk8';
 
@@ -30,7 +37,7 @@ async function subscribeUser() {
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
+    .replace(/-/g, '+')
     .replace(/_/g, '/');
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
@@ -42,6 +49,8 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 const NotificationManager: React.FC = () => {
+  const [subscriptions, setSubscriptions] = useState<{ endpoint: string; domain: string; }[]>([]);
+
   useEffect(() => {
     subscribeUser();
   }, []);
@@ -60,46 +69,32 @@ const NotificationManager: React.FC = () => {
   };
 
   const loadSubscriptions = async () => {
-    const response = await fetch('http://localhost:5000/api/notifications/subscriptions');
-    const subscriptions = await response.json();
-    const tableBody = document.querySelector('#subscriptions-table tbody');
-
-    subscriptions.forEach((sub: { endpoint: string; domain: string; }) => {
-      const row = document.createElement('tr');
-
-      const endpointCell = document.createElement('td');
-      endpointCell.textContent = sub.endpoint;
-
-      const domainCell = document.createElement('td');
-      domainCell.textContent = sub.domain;
-
-      const actionCell = document.createElement('td');
-      const button = document.createElement('button');
-      button.textContent = 'Enviar Notificación';
-      button.addEventListener('click', () => sendNotification(sub.endpoint));
-
-      actionCell.appendChild(button);
-      row.appendChild(endpointCell);
-      row.appendChild(domainCell);
-      row.appendChild(actionCell);
-
-      tableBody.appendChild(row);
-    });
+    try {
+      const response = await fetch('https://bs19l2t0-5000.use2.devtunnels.ms/api/notifications/subscriptions');
+      if (response.ok) {
+        const data = await response.json();
+        setSubscriptions(data);
+      } else {
+        console.error("Error al cargar las suscripciones:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error al cargar las suscripciones:", error);
+    }
   };
 
   const sendNotification = async (endpoint: string) => {
-    await fetch('http://localhost:5000/api/notifications/send', {
-      method: 'POST',
-      body: JSON.stringify({
-        endpoint: endpoint,
-        title: 'Notificación Personalizada',
-        body: 'Esta es una notificación enviada solo a este usuario.'
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    await fetch('https://bs19l2t0-5000.use2.devtunnels.ms/api/notifications/send', {
+        method: 'POST',
+        body: JSON.stringify({
+            endpoint: endpoint,
+            title: 'Notificación Personalizada',
+            body: 'Esta es una notificación enviada solo a este usuario.'
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
     });
-  };
+};
 
   useEffect(() => {
     loadSubscriptions();
@@ -107,19 +102,24 @@ const NotificationManager: React.FC = () => {
 
   return (
     <div>
-      <button id="notify-btn" onClick={handleNotifyClick}>
-        Enviar Notificación Manual
-      </button>
-      <table id="subscriptions-table">
-        <thead>
-          <tr>
-            <th>Endpoint</th>
-            <th>Dominio</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div className="flex justify-center mb-6">
+        <Button
+          label="Enviar Notificación"
+          icon="pi pi-bell"
+          className="p-button-success text-xl px-6 py-3 rounded-full"
+          onClick={handleNotifyClick}
+        />
+      </div>
+      <DataTable value={subscriptions} className="p-datatable-custom w-full" emptyMessage="No hay suscripciones disponibles">
+        <Column field="endpoint" header="Endpoint" />
+        <Column field="domain" header="Domain" />
+        <Column
+          header="Acción"
+          body={(rowData) => (
+            <Button label="Enviar Notificación" className="p-button-info" onClick={() => sendNotification(rowData.endpoint)} />
+          )}
+        />
+      </DataTable>
     </div>
   );
 };

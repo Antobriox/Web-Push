@@ -1,0 +1,60 @@
+.dialog-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.dialog-content {
+    padding: 1rem;
+}
+
+.dialog-field {
+    margin-bottom: 1.5rem;
+}
+
+.dialog-label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #555;
+}
+
+.dialog-input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.dialog-textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dialog-footer .p-button {
+    background-color: #28a745;  
+    border-color: #28a745;
+    color: white;
+    font-size: 1.2rem;  
+    padding: 0.50rem 1.0rem;  
+}
+
+
+.p-dialog-header-icon {
+    transition: box-shadow 0.3s ease;
+}
+
+.p-dialog-header-icon:hover {
+    box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0.75);
+    border-radius: 50%;
+}

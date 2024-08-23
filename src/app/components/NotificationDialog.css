@@ -41,14 +41,15 @@
     justify-content: flex-end;
 }
 
-.dialog-footer .p-button {
-    background-color: #28a745;  
-    border-color: #28a745;
-    color: white;
-    font-size: 1.2rem;  
-    padding: 0.50rem 1.0rem;  
+.dialog-footer .custom-send-button {
+    background-color: #28a745;  /* Color verde */
+    border-color: #28a745;      /* Borde verde */
+    color: white;               /* Texto blanco */
+    font-size: 1.2rem;          /* Aumentar tamaño de fuente */
+    padding: 0.50rem 1.0rem;    /* Ajuste de padding */
+    width: 100%;                /* Ancho completo */
+    text-align: center;         /* Alinear texto al centro */
 }
-
 
 .p-dialog-header-icon {
     transition: box-shadow 0.3s ease;
